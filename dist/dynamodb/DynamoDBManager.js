@@ -139,13 +139,18 @@ var DynamoDBManager = /** @class */ (function () {
         var geohash = S2Manager_1.S2Manager.generateGeohash(updatePointInput.GeoPoint);
         var hashKey = S2Manager_1.S2Manager.generateHashKey(geohash, this.config.hashKeyLength);
         updatePointInput.UpdateItemInput.TableName = this.config.tableName;
+        var updateAttributesOnly = false;
         if (!updatePointInput.UpdateItemInput.Key) {
             updatePointInput.UpdateItemInput.Key = {};
             updatePointInput.UpdateItemInput.Key[this.config.hashKeyAttributeName] = { N: hashKey.toString(10) };
             updatePointInput.UpdateItemInput.Key[this.config.rangeKeyAttributeName] = updatePointInput.RangeKeyValue;
         }
+        else {
+            updateAttributesOnly = true;
+            updatePointInput.UpdateItemInput.AttributeUpdates[this.config.hashKeyAttributeName] = { N: hashKey.toString(10) };
+        }
         // Geohash and geoJson cannot be updated.
-        if (updatePointInput.UpdateItemInput.AttributeUpdates) {
+        if (updatePointInput.UpdateItemInput.AttributeUpdates && !updateAttributesOnly) {
             delete updatePointInput.UpdateItemInput.AttributeUpdates[this.config.geohashAttributeName];
             delete updatePointInput.UpdateItemInput.AttributeUpdates[this.config.geoJsonAttributeName];
         }
