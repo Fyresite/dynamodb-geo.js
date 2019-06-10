@@ -172,10 +172,10 @@ export class DynamoDBManager {
 
     if (!updatePointInput.UpdateItemInput.Key) {
       updatePointInput.UpdateItemInput.Key = {};
+      updatePointInput.UpdateItemInput.Key[this.config.hashKeyAttributeName] = { N: hashKey.toString(10) };
+      updatePointInput.UpdateItemInput.Key[this.config.rangeKeyAttributeName] = updatePointInput.RangeKeyValue;
     }
-
-    updatePointInput.UpdateItemInput.Key[this.config.hashKeyAttributeName] = { N: hashKey.toString(10) };
-    updatePointInput.UpdateItemInput.Key[this.config.rangeKeyAttributeName] = updatePointInput.RangeKeyValue;
+    
 
     // Geohash and geoJson cannot be updated.
     if (updatePointInput.UpdateItemInput.AttributeUpdates) {
